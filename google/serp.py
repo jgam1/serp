@@ -22,12 +22,14 @@ today = str(date.today())
 def serp(keywords, region, language):
 	#keywords = 'ascent'
 	driver = webdriver.Chrome('/Users/ascent/Downloads/chromedriver')
-	index = 0
-	rank = 0
-	first_index = 2
+	
 	#ret_dict includes keys as ranks and values as list of elements in this order: title, url, and contents
-	ret_dict = dict()
+	ret_list = []
 	for keyword in keywords:
+		ret_dict = dict()
+		index = 0
+		rank = 0
+		first_index = 2
 		driver.get('https://www.google.com/webhp?hl='+language+'&gl='+region+'&q='+keyword+'&num=20')#/search?hl=ko&gl=kr')
 		search_button = driver.find_elements_by_xpath("//*[@id=\"tsf\"]/div[2]/div/div[3]/center/input[1]")[0]
 		search_button.click()
@@ -68,8 +70,10 @@ def serp(keywords, region, language):
 			#finally add info to dict
 			rank += 1
 			ret_dict[rank] = rank_info
+		ret_dict[0]=keyword
+		ret_list.append(ret_dict)
 
-	return ret_dict
+	return ret_list
 
 #create dictionary(hardcoding) for language and region
 human_language = {'1':'kr', '3':'ja', '2':'en'}
@@ -81,12 +85,21 @@ language = input('type language: ')
 location = input('type location: ')
 keyword = input('type keyword separated by comma, if you have more than 5 keywords, input 0 : ').split(',')
 
-if '0' in keyword:
-	#load csv file from directory
-	print(imported)
-keyword = ['ascent']
+file = 'input.csv'
+keyword = []
+with open(file) as f:
+	reader = csv.reader(f)
+	for i in reader:
+		keyword.append(i[0])
+print(keyword)
+keyword = ['ascent','viva']
 data = serp(keyword, geo_location[location], human_language[language])
+print(data)
 output = csv.writer(open("output.csv", 'w'))
-for key,val in data.items():
-	output.writerow([key, val])
+output.writerow(['keyword','rank', 'title', 'contents', 'urls'])
+for datum in data:
+	output.writerow([datum[0]])
+	del datum[0]
+	for key,val in datum.items():
+		output.writerow(['',key, val[0], val[1], val[2]])
 print(data)
