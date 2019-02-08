@@ -30,7 +30,14 @@ def get_serp(keywords, language, region):
 		ret_list.append(ret_dict)
 	return ret_list
 
-keywords = ['galaxy s8 widget', 'galaxy s6', 'iphone xr']
+
+
+file = 'input.csv'
+keywords = []
+with open(file) as f:
+	reader = csv.reader(f)
+	for i in reader:
+		keywords.append(i[0])
 data = get_serp(keywords, 'ja', 'jp')
 output = csv.writer(open("output.csv", 'w'))
 output.writerow(['keyword','rank', 'title', 'urls', 'contents'])
