@@ -29,7 +29,7 @@ def get_serp(keywords, language, region):
 
 		titles = driver.find_elements_by_class_name("LC20lb")
 		urls = driver.find_elements_by_class_name("iUh30")
-		contents = driver.find_elements_by_class_name("sT")
+		contents = driver.find_elements_by_class_name("st")
 		ret_dict = {}
 		ret_dict[0] = keyword
 		for i in range(10):
