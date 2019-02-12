@@ -20,13 +20,20 @@ def get_serp(keywords, language, region):
 		search_button = driver.find_elements_by_xpath("//*[@id=\"tsf\"]/div[2]/div/div[3]/center/input[1]")[0]
 		search_button.click()
 		time.sleep(1)
+
+		soup = BeautifulSoup(driver.page_source)
+		#print(soup.prettify())
+		for link in soup.find_all('a'):
+			print(link.get('href'))
+		results = driver.find_elements_by_css_selector('div.g')
+
 		titles = driver.find_elements_by_class_name("LC20lb")
 		urls = driver.find_elements_by_class_name("iUh30")
-		contents = driver.find_elements_by_class_name("st")
+		contents = driver.find_elements_by_class_name("sT")
 		ret_dict = {}
 		ret_dict[0] = keyword
 		for i in range(10):
-			ret_dict[i+1]=[titles[i].text, urls[i].text, contents[i].text]
+			ret_dict[i+1]=[titles[i].text, results[i].find_element_by_tag_name("a").get_attribute("href"), contents[i].text]
 		ret_list.append(ret_dict)
 	return ret_list
 
@@ -38,6 +45,7 @@ with open(file) as f:
 	reader = csv.reader(f)
 	for i in reader:
 		keywords.append(i[0])
+#this ja and jp need to be changed to input language hen we are good to go
 data = get_serp(keywords, 'ja', 'jp')
 output = csv.writer(open("output.csv", 'w'))
 output.writerow(['keyword','rank', 'title', 'urls', 'contents'])
